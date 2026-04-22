@@ -41,11 +41,3 @@ export async function searchPhotos(query, page = 1, perPage = 20) {
     content_filter: "high"
   });
 }
-
-export async function getPopularPhotos(page = 1, perPage = 20) {
-  return fetchFromUnsplash("/photos", {
-    page,
-    per_page: perPage,
-    order_by: "popular"
-  });
-}
