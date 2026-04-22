@@ -29,17 +29,25 @@ if (!app) {
 
 /* HEADER*/
 const { header, input } = Header({
-  initialQuery: state.query,
+  initialQuery: '',
   onSearch: (newQuery) => {
-  state.query = newQuery
-  state.page = 1
-  state.totalPages = 1
-  grid.innerHTML = ''
-  loadPhotos(true)
-  input.value = ''
-}
+    state.query = newQuery
+    state.page = 1
+    state.totalPages = 1
+    grid.innerHTML = ''
+    loadPhotos(true)
+    input.value = ''
+  },
+  onReset: () => {
+    state.query = INITIAL_QUERY
+    state.page = 1
+    state.totalPages = 1
+    grid.innerHTML = ''
+    emptyStateContainer.innerHTML = ''
+    loadPhotos(true)
+    input.value = ''
+  }
 })
-
 /*LAYOUT*/
 const container = document.createElement('div')
 container.className = 'container'
