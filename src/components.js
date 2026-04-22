@@ -1,7 +1,7 @@
-function el(tag, className, attrs = {}) {
+function createElement(tag, className, attrs = {}) {
   const node = document.createElement(tag);
   if (className) node.className = className;
-  Object.entries(attrs).forEach(([k, v]) => {
+  Object.entries(attrs).forEach(([attributeName, attributeValue]) => {
     if (v === undefined || v === null) return;
     if (k === "text") node.textContent = v;
     else if (k === "html") node.innerHTML = v;
@@ -36,7 +36,7 @@ export function ChatIcon() {
   return svg;
 }
 
-export function Header({ initialQuery, onSearch }) {
+export function Header({ initialQuery, onSearch, onReset }) {
   const header = el("header", "header");
   const inner = el("div", "header-inner");
 
@@ -44,6 +44,10 @@ export function Header({ initialQuery, onSearch }) {
   const badge = el("div", "brand-badge", { text: "P" });
   const name = el("span", "", { text: "Pinterest" });
   brand.append(badge, name);
+  brand.addEventListener("click", (event) => {
+  event.preventDefault();
+  onReset();
+});
 
   const chipHome = el("a", "nav-chip", { href: "#", text: "Inicio" });
   const chipExplore = el("a", "nav-chip", { href: "#", text: "Explorar" });
@@ -58,9 +62,9 @@ export function Header({ initialQuery, onSearch }) {
   });
   searchWrap.append(icon, input);
 
-  searchWrap.addEventListener("submit", (e) => {
+  searchWrap.addEventListener("submit", (event) => {
     e.preventDefault();
-    const q = input.value.trim();
+    const query = input.value.trim();
     if (q) onSearch(q);
   });
 
@@ -123,7 +127,7 @@ export function PinCard(photo) {
   });
 
   const btnMore = el("button", "btn btn-ghost", { type: "button", text: "⋯" });
-  btnMore.addEventListener("click", (e) => {
+  btnMore.addEventListener("click", (event) => {
     e.preventDefault();
     e.stopPropagation();
     alert("Acciones (placeholder): guardar, compartir, reportar…");
@@ -145,10 +149,10 @@ export function PinCard(photo) {
     alt: photo.user?.name || "Usuario"
   });
 
-  const info = el("div", "user-info");
-  const uname = el("div", "user-name", { text: photo.user?.name || "Usuario" });
+  const userInfo = el("div", "user-info");
+  const userName = el("div", "user-name", { text: photo.user?.name || "Usuario" });
 
-  const sub = el("div", "user-sub");
+  const userMeta = el("div", "user-sub");
   const date = el("span", "", { text: formatDate(photo.created_at) });
   const dot = el("span", "", { text: "•" });
   dot.style.opacity = ".45";
