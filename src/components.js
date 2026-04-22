@@ -37,12 +37,11 @@ export function ChatIcon() {
 }
 
 export function Header({ initialQuery, onSearch, onReset }) {
-  const header = el("header", "header");
-  const inner = el("div", "header-inner");
-
-  const brand = el("a", "brand", { href: "#" });
-  const badge = el("div", "brand-badge", { text: "P" });
-  const name = el("span", "", { text: "Pinterest" });
+const header = createElement('header', 'header')
+const inner = createElement('div', 'header-inner')
+const brand = createElement('a', 'brand', { href: '#' })
+const badge = createElement('div', 'brand-badge', { text: 'P' })
+const name = createElement('span', '', { text: 'Pinterest' })
   brand.append(badge, name);
   brand.addEventListener("click", (event) => {
   event.preventDefault();
