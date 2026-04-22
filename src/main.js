@@ -10,8 +10,10 @@ import {
 console.log('✅ main.js cargado')
 
 /*STATE*/
+const INITIAL_QUERY = 'nature'
+
 const state = {
-  query: 'nature',
+  query: INITIAL_QUERY,
   page: 1,
   perPage: 20,
   totalPages: 1,
@@ -26,15 +28,16 @@ if (!app) {
 }
 
 /* HEADER*/
-const { header } = Header({
+const { header, input } = Header({
   initialQuery: state.query,
   onSearch: (newQuery) => {
-    state.query = newQuery
-    state.page = 1
-    state.totalPages = 1
-    grid.innerHTML = ''
-    loadPhotos(true)
-  }
+  state.query = newQuery
+  state.page = 1
+  state.totalPages = 1
+  grid.innerHTML = ''
+  loadPhotos(true)
+  input.value = ''
+}
 })
 
 /*LAYOUT*/
@@ -45,6 +48,8 @@ const main = document.createElement('main')
 main.className = 'main'
 
 const grid = MasonryGrid()
+const emptyStateContainer = document.createElement('div')
+emptyStateContainer.className = 'empty-state-container'
 
 const footer = document.createElement('div')
 footer.className = 'footerbar'
@@ -52,6 +57,7 @@ footer.className = 'footerbar'
 const loader = Loader()
 footer.appendChild(loader)
 
+main.appendChild(emptyStateContainer)
 main.appendChild(grid)
 main.appendChild(footer)
 container.appendChild(main)
@@ -92,11 +98,14 @@ async function loadPhotos(reset = false) {
 
     state.totalPages = data.total_pages || 1
 
-    if (reset && data.results.length === 0) {
-      grid.appendChild(EmptyState(state.query))
-      return
-    }
-
+  if (reset && data.results.length === 0) {
+  emptyStateContainer.innerHTML = ''
+  emptyStateContainer.appendChild(EmptyState(state.query))
+  return
+}
+    if (reset) {
+  emptyStateContainer.innerHTML = ''
+}
     const fragment = document.createDocumentFragment()
 
     data.results.forEach((photo) => {
@@ -107,12 +116,12 @@ async function loadPhotos(reset = false) {
   } catch (error) {
     console.error('❌ Error cargando fotos:', error)
 
-    grid.innerHTML = `
-      <div style="padding:24px;color:red;">
-        Error cargando imágenes:<br/>
-        ${error.message}
-      </div>
-    `
+emptyStateContainer.innerHTML = `
+  <div class="empty">
+    <strong>Error cargando imágenes</strong><br/>
+    ${error.message}
+  </div>
+`
   } finally {
     state.loading = false
     loader.style.display = state.page < state.totalPages ? 'flex' : 'none'
